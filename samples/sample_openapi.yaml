@@ -1,26 +1,108 @@
 openapi: 3.0.3
 info:
   title: Sample User API
-  version: 0.1.0
-  description: Placeholder OpenAPI spec for skeleton stage.
+  version: 0.2.0
+  description: Sample OpenAPI spec for parser development.
 
 servers:
   - url: http://localhost:8000
 
 paths:
-  /health:
+  /users/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        description: Unique identifier of a user.
+        schema:
+          type: integer
     get:
-      summary: Health check endpoint
+      summary: Get user by id
+      operationId: getUserById
+      parameters:
+        - name: includePosts
+          in: query
+          required: false
+          description: Include recent posts in the response.
+          schema:
+            type: boolean
+        - name: X-Trace-Id
+          in: header
+          required: false
+          description: Trace identifier for debugging.
+          schema:
+            type: string
       responses:
         "200":
-          description: API is healthy
+          description: User found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                required:
-                  - status
+                $ref: '#/components/schemas/User'
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users:
+    post:
+      summary: Create a user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - name
+        - email
+
+    CreateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - name
+        - email
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
