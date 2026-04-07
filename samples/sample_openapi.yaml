@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info:
+  title: Sample User API
+  version: 0.1.0
+  description: Placeholder OpenAPI spec for skeleton stage.
+
+servers:
+  - url: http://localhost:8000
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      responses:
+        "200":
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                required:
+                  - status
