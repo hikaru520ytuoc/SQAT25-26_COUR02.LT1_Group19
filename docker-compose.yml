@@ -1,4 +1,27 @@
 services:
+  demo-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openapi-test-tool:dev
+    container_name: openapi-demo-api
+    working_dir: /app
+    entrypoint:
+      - uvicorn
+      - demo_api.app:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 3s
+
   tool:
     build:
       context: .
@@ -8,6 +31,9 @@ services:
     working_dir: /app
     environment:
       PYTHONUNBUFFERED: "1"
+    depends_on:
+      demo-api:
+        condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -17,6 +43,6 @@ services:
       - --spec
       - samples/sample_openapi.yaml
       - --base-url
-      - http://host.docker.internal:8000
+      - http://demo-api:8000
       - --output
       - reports

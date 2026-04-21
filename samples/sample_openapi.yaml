@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: Sample User API
-  version: 0.3.0
-  description: Sample OpenAPI spec for parser and test case generator development.
+  version: 0.4.0
+  description: Sample OpenAPI spec for parser, generator, executor, and local demo API development.
 
 servers:
   - url: http://localhost:8000
@@ -49,6 +49,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /users:
     post:
@@ -67,12 +73,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        "400":
-          description: Invalid request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
         "422":
           description: Validation failed
           content:

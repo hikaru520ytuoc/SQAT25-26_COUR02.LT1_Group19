@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 PYTEST := $(VENV)/bin/pytest
-PYRUN := PYTHONPATH=src $(VENV)/bin/python
+PYRUN := PYTHONPATH=src:. $(VENV)/bin/python
 
 install:
 	$(PYTHON) -m venv $(VENV)
@@ -12,8 +12,11 @@ install:
 run:
 	$(PYRUN) main.py --spec samples/sample_openapi.yaml --base-url http://localhost:8000 --output reports
 
+demo-api:
+	PYTHONPATH=src:. $(VENV)/bin/uvicorn demo_api.app:app --host 0.0.0.0 --port 8000 --reload
+
 test:
-	PYTHONPATH=src $(PYTEST) -q
+	PYTHONPATH=src:. $(PYTEST) -q
 
 docker-build:
 	docker build -t openapi-test-tool:dev .
@@ -27,6 +30,15 @@ docker-run:
 		--spec samples/sample_openapi.yaml \
 		--base-url http://host.docker.internal:8000 \
 		--output reports
+
+demo-up:
+	docker compose up --build -d demo-api
+
+demo-down:
+	docker compose down
+
+demo-run:
+	docker compose run --rm tool
 
 clean:
 	rm -rf $(VENV) .pytest_cache

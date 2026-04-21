@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 COPY src ./src
+COPY demo_api ./demo_api
 COPY main.py .
 COPY README.md .
 COPY samples ./samples
