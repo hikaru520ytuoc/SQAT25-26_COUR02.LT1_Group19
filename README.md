@@ -6,7 +6,7 @@ CLI tool for the project:
 
 ## Current status
 
-This repository is currently in **stage 5.5**.
+This repository is currently in **stage 6**.
 
 Implemented in this stage:
 - OpenAPI loader and parser for OpenAPI 3.x at MVP level
@@ -17,10 +17,10 @@ Implemented in this stage:
 - basic response schema validation with `jsonschema`
 - lightweight local demo API with FastAPI
 - local run and Docker Compose demo flow for `tool -> demo API`
-- pytest suite for parser, generator, executor, CLI, and demo API
+- JSON, Markdown, and HTML report generation
+- pytest suite for parser, generator, executor, reporter, CLI, and demo API
 
 Not implemented yet:
-- detailed report writer to JSON/HTML files
 - advanced authentication flows
 - multi-step workflow execution across endpoints
 - async execution or performance testing
@@ -191,6 +191,21 @@ This is enough to demonstrate that the project can:
 - generate test cases
 - execute real HTTP requests
 - validate responses against expected behavior
+- export execution reports to JSON, Markdown, and HTML
+
+---
+
+## Report files
+
+After each run, the tool writes three files to the output directory:
+- `report_YYYYMMDD_HHMMSS.json`
+- `report_YYYYMMDD_HHMMSS.md`
+- `report_YYYYMMDD_HHMMSS.html`
+
+These reports are suitable for:
+- GitHub artifacts
+- thesis/demo screenshots
+- further automation in later stages
 
 ---
 

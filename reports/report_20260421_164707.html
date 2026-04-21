@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAPI Test Tool Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      color: #222;
+      background: #f7f8fa;
+    }
+    h1, h2, h3 {
+      margin-bottom: 8px;
+    }
+    .meta {
+      margin-bottom: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f3f8;
+    }
+    .status-pass {
+      color: #137333;
+      font-weight: bold;
+    }
+    .status-fail {
+      color: #c5221f;
+      font-weight: bold;
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pill-valid { background: #e8f0fe; color: #1967d2; }
+    .pill-invalid { background: #fce8e6; color: #b3261e; }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .small {
+      color: #666;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>OpenAPI Test Tool Execution Report</h1>
+  <div class="meta small">
+    Generated at: 2026-04-21T16:47:07<br />
+    Spec file: /home/hikaru520/Projects/SQAT25-26_COUR02.LT1_Group19/samples/sample_openapi.yaml<br />
+    Base URL: http://localhost:8000<br />
+    Tool version: 0.1.0
+  </div>
+
+  <div class="card">
+    <h2>Spec Metadata</h2>
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>OpenAPI version</td><td>3.0.3</td></tr>
+      <tr><td>Title</td><td>Sample User API</td></tr>
+      <tr><td>Spec version</td><td>0.4.0</td></tr>
+      <tr><td>Path count</td><td>2</td></tr>
+      <tr><td>Operation count</td><td>2</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Execution Summary</h2>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Total test cases</td><td>20</td></tr>
+      <tr><td>Generated valid cases</td><td>5</td></tr>
+      <tr><td>Generated invalid cases</td><td>15</td></tr>
+      <tr><td>Passed</td><td>18</td></tr>
+      <tr><td>Failed</td><td>2</td></tr>
+      <tr><td>Valid passed</td><td>4</td></tr>
+      <tr><td>Invalid passed</td><td>14</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Detailed Results</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Category</th>
+        <th>Type</th>
+        <th>Method</th>
+        <th>Path</th>
+        <th>Expected</th>
+        <th>Actual</th>
+        <th>Time (ms)</th>
+      </tr>
+      <tr>
+        <td>TC-001</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-valid">valid</span></td>
+        <td>valid_case</td>
+        <td>GET</td>
+        <td>/users/{userId}</td>
+        <td>200</td>
+        <td>200</td>
+        <td>5.37</td>
+      </tr>
+      <tr>
+        <td>TC-002</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>missing_required_parameter</td>
+        <td>GET</td>
+        <td>/users/{userId}</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.82</td>
+      </tr>
+      <tr>
+        <td>TC-003</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>wrong_data_type</td>
+        <td>GET</td>
+        <td>/users/{userId}</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.22</td>
+      </tr>
+      <tr>
+        <td>TC-004</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>wrong_data_type</td>
+        <td>GET</td>
+        <td>/users/{userId}</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.06</td>
+      </tr>
+      <tr>
+        <td>TC-005</td>
+        <td class="status-fail">FAIL</td>
+        <td><span class="pill pill-valid">valid</span></td>
+        <td>boundary_value</td>
+        <td>GET</td>
+        <td>/users/{userId}</td>
+        <td>200</td>
+        <td>404</td>
+        <td>1.49</td>
+      </tr>
+      <tr>
+        <td>TC-006</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-valid">valid</span></td>
+        <td>valid_case</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>201</td>
+        <td>201</td>
+        <td>1.71</td>
+      </tr>
+      <tr>
+        <td>TC-007</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>missing_required_field</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.11</td>
+      </tr>
+      <tr>
+        <td>TC-008</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>missing_required_field</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.07</td>
+      </tr>
+      <tr>
+        <td>TC-009</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>missing_required_field</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>2.21</td>
+      </tr>
+      <tr>
+        <td>TC-010</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>missing_required_field</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.04</td>
+      </tr>
+      <tr>
+        <td>TC-011</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>wrong_data_type</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.06</td>
+      </tr>
+      <tr>
+        <td>TC-012</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>wrong_data_type</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>0.79</td>
+      </tr>
+      <tr>
+        <td>TC-013</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>wrong_data_type</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>0.73</td>
+      </tr>
+      <tr>
+        <td>TC-014</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>wrong_data_type</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>0.80</td>
+      </tr>
+      <tr>
+        <td>TC-015</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>invalid_enum</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>0.78</td>
+      </tr>
+      <tr>
+        <td>TC-016</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>empty_value</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.05</td>
+      </tr>
+      <tr>
+        <td>TC-017</td>
+        <td class="status-fail">FAIL</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>empty_value</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>201</td>
+        <td>1.36</td>
+      </tr>
+      <tr>
+        <td>TC-018</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-invalid">invalid</span></td>
+        <td>empty_value</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>422</td>
+        <td>422</td>
+        <td>1.20</td>
+      </tr>
+      <tr>
+        <td>TC-019</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-valid">valid</span></td>
+        <td>boundary_value</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>201</td>
+        <td>201</td>
+        <td>1.44</td>
+      </tr>
+      <tr>
+        <td>TC-020</td>
+        <td class="status-pass">PASS</td>
+        <td><span class="pill pill-valid">valid</span></td>
+        <td>boundary_value</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>201</td>
+        <td>201</td>
+        <td>1.42</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Failed Cases</h2>
+    <h3>TC-005 - GET /users/{userId} - boundary value for parameter userId</h3>
+    <p>
+      <strong>Method:</strong> GET<br />
+      <strong>Path:</strong> /users/{userId}<br />
+      <strong>Expected:</strong> 200<br />
+      <strong>Actual:</strong> 404
+    </p>
+      <pre>{
+  "message": "User not found"
+}</pre>
+    <h3>TC-017 - POST /users - empty value for body field email</h3>
+    <p>
+      <strong>Method:</strong> POST<br />
+      <strong>Path:</strong> /users<br />
+      <strong>Expected:</strong> 422<br />
+      <strong>Actual:</strong> 201
+    </p>
+      <pre>{
+  "id": 12,
+  "username": "alice",
+  "email": "",
+  "age": 25,
+  "role": "member"
+}</pre>
+  </div>
+</body>
+</html>

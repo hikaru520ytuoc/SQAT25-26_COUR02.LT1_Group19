@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAPI Test Tool Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      color: #222;
+      background: #f7f8fa;
+    }
+    h1, h2, h3 {
+      margin-bottom: 8px;
+    }
+    .meta {
+      margin-bottom: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f3f8;
+    }
+    .status-pass {
+      color: #137333;
+      font-weight: bold;
+    }
+    .status-fail {
+      color: #c5221f;
+      font-weight: bold;
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pill-valid { background: #e8f0fe; color: #1967d2; }
+    .pill-invalid { background: #fce8e6; color: #b3261e; }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .small {
+      color: #666;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>OpenAPI Test Tool Execution Report</h1>
+  <div class="meta small">
+    Generated at: {{ context.summary.generated_at }}<br />
+    Spec file: {{ context.spec_file }}<br />
+    Base URL: {{ context.base_url }}<br />
+    Tool version: {{ context.tool_version }}
+  </div>
+
+  <div class="card">
+    <h2>Spec Metadata</h2>
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>OpenAPI version</td><td>{{ context.spec_summary.openapi_version }}</td></tr>
+      <tr><td>Title</td><td>{{ context.spec_summary.title or '-' }}</td></tr>
+      <tr><td>Spec version</td><td>{{ context.spec_summary.version or '-' }}</td></tr>
+      <tr><td>Path count</td><td>{{ context.spec_summary.path_count }}</td></tr>
+      <tr><td>Operation count</td><td>{{ context.spec_summary.operation_count }}</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Execution Summary</h2>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Total test cases</td><td>{{ context.summary.total_test_cases }}</td></tr>
+      <tr><td>Generated valid cases</td><td>{{ context.summary.generated_valid_count }}</td></tr>
+      <tr><td>Generated invalid cases</td><td>{{ context.summary.generated_invalid_count }}</td></tr>
+      <tr><td>Passed</td><td>{{ context.summary.passed_count }}</td></tr>
+      <tr><td>Failed</td><td>{{ context.summary.failed_count }}</td></tr>
+      <tr><td>Valid passed</td><td>{{ context.summary.valid_passed_count }}</td></tr>
+      <tr><td>Invalid passed</td><td>{{ context.summary.invalid_passed_count }}</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Detailed Results</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Category</th>
+        <th>Type</th>
+        <th>Method</th>
+        <th>Path</th>
+        <th>Expected</th>
+        <th>Actual</th>
+        <th>Time (ms)</th>
+      </tr>
+      {% for result in context.detailed_results %}
+      <tr>
+        <td>{{ result.test_id }}</td>
+        <td class="{{ 'status-pass' if result.passed else 'status-fail' }}">{{ pass_label if result.passed else fail_label }}</td>
+        <td><span class="pill {{ 'pill-valid' if result.category.value == 'valid' else 'pill-invalid' }}">{{ result.category.value }}</span></td>
+        <td>{{ result.test_type.value }}</td>
+        <td>{{ result.method }}</td>
+        <td>{{ result.path }}</td>
+        <td>{{ result.expected_status_codes | join(', ') }}</td>
+        <td>{{ result.actual_status_code if result.actual_status_code is not none else '-' }}</td>
+        <td>{{ '%.2f' | format(result.response_time_ms) if result.response_time_ms is not none else '-' }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  {% set failed_results = context.detailed_results | selectattr('passed', 'equalto', False) | list %}
+  {% if failed_results %}
+  <div class="card">
+    <h2>Failed Cases</h2>
+    {% for result in failed_results %}
+    <h3>{{ result.test_id }} - {{ result.name }}</h3>
+    <p>
+      <strong>Method:</strong> {{ result.method }}<br />
+      <strong>Path:</strong> {{ result.path }}<br />
+      <strong>Expected:</strong> {{ result.expected_status_codes | join(', ') }}<br />
+      <strong>Actual:</strong> {{ result.actual_status_code if result.actual_status_code is not none else '-' }}
+    </p>
+    {% if result.execution_error %}
+      <p><strong>Execution error:</strong> {{ result.execution_error }}</p>
+    {% endif %}
+    {% if result.validation_errors %}
+      <p><strong>Validation errors:</strong> {{ result.validation_errors | join('; ') }}</p>
+    {% endif %}
+    {% if result.response_body is not none %}
+      <pre>{{ pretty_json(result.response_body) }}</pre>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</body>
+</html>

@@ -9,6 +9,7 @@ from openapi_test_tool.config import AppConfig
 from openapi_test_tool.executor import execute_test_suite
 from openapi_test_tool.generator import generate_test_suite
 from openapi_test_tool.parser import OpenAPILoaderError, SchemaResolverError, extract_spec_summary, load_openapi_spec
+from openapi_test_tool.reporter import build_report_context, write_report_files
 
 app = typer.Typer(
     add_completion=False,
@@ -23,8 +24,8 @@ def main(
     base_url: str = typer.Option(..., "--base-url", help="Base URL of the target REST API."),
     output: Path = typer.Option(Path("reports"), "--output", help="Directory to store generated reports."),
 ) -> None:
-    """Load a spec, generate test cases, execute them, and print a small summary."""
-    console.print(Panel.fit("OpenAPI Test Tool - Executor Stage", style="bold cyan"))
+    """Load a spec, generate test cases, execute them, write reports, and print a summary."""
+    console.print(Panel.fit("OpenAPI Test Tool - Reporter Stage", style="bold cyan"))
 
     output.mkdir(parents=True, exist_ok=True)
 
@@ -38,6 +39,14 @@ def main(
             base_url=config.base_url,
             timeout_seconds=config.timeout_seconds,
         )
+        report_context = build_report_context(
+            spec_file=str(config.spec),
+            base_url=config.base_url,
+            spec_summary=spec_summary,
+            test_suite_summary=test_suite,
+            execution_summary=execution_summary,
+        )
+        report_files = write_report_files(report_context, config.output)
     except (OpenAPILoaderError, SchemaResolverError, ValueError) as exc:
         console.print(f"[bold red]Execution setup error:[/bold red] {exc}")
         raise typer.Exit(code=1) from exc
@@ -118,6 +127,14 @@ def main(
 
     console.print(preview_table)
 
+    report_table = Table(title="Generated Report Files")
+    report_table.add_column("Format", style="bold cyan")
+    report_table.add_column("Path", style="white")
+    report_table.add_row("JSON", str(report_files["json"]))
+    report_table.add_row("Markdown", str(report_files["markdown"]))
+    report_table.add_row("HTML", str(report_files["html"]))
+    console.print(report_table)
+
     if execution_summary.total_count > 0 and all(result.execution_error for result in execution_summary.results):
         console.print(
             "[bold yellow]Warning:[/bold yellow] All requests failed at transport level. "
@@ -125,7 +142,7 @@ def main(
             "localhost inside the container is not always the host. Use host.docker.internal or a shared Docker network when needed."
         )
 
-    console.print("[bold green]Test execution completed successfully.[/bold green]")
+    console.print("[bold green]Test execution and report generation completed successfully.[/bold green]")
 
 
 if __name__ == "__main__":

@@ -68,4 +68,8 @@ def test_cli_parse_generate_and_execute_success(monkeypatch, tmp_path):
     assert "OpenAPI parsing completed successfully." in result.stdout
     assert "Generated Test Case Summary" in result.stdout
     assert "Execution Summary" in result.stdout
-    assert "Test execution completed successfully." in result.stdout
+    assert "Generated Report Files" in result.stdout
+    assert "Test execution and report generation completed successfully." in result.stdout
+    assert len(list(output_dir.glob("report_*.json"))) == 1
+    assert len(list(output_dir.glob("report_*.md"))) == 1
+    assert len(list(output_dir.glob("report_*.html"))) == 1

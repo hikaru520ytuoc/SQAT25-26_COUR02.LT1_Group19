@@ -46,4 +46,6 @@ def test_cli_smoke_creates_output_dir(monkeypatch, tmp_path):
 
     assert result.exit_code == 0
     assert output_dir.exists()
-    assert "Test execution completed successfully." in result.stdout
+    assert "Generated Report Files" in result.stdout
+    assert "Test execution and report generation completed successfully." in result.stdout
+    assert len(list(output_dir.glob("report_*.json"))) == 1
