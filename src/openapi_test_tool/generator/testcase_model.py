@@ -42,6 +42,7 @@ class GeneratedTestCase(BaseModel):
     headers: dict[str, Any] = Field(default_factory=dict)
     request_body: Any | None = None
     expected_status_codes: list[int] = Field(default_factory=list)
+    expected_response_schemas: dict[str, dict[str, Any] | None] = Field(default_factory=dict)
     category: TestCaseCategory
     test_type: TestCaseType
     source_operation_id: str | None = None

@@ -1,29 +1,29 @@
 # OpenAPI Test Tool
 
-CLI tool skeleton for the project:
+CLI tool for the project:
 
 **“Xây dựng công cụ hỗ trợ sinh và thực thi ca kiểm thử chức năng cho REST API dựa trên đặc tả OpenAPI”**
 
 ## Current status
 
-This repository is currently in the **skeleton stage**.
+This repository is currently in the **executor stage**.
 
 Implemented in this stage:
-- project structure
-- CLI entrypoint
-- local Python run
-- Docker packaging
-- Docker Compose demo run
-- Makefile shortcuts
-- sample OpenAPI file
-- smoke test
+- OpenAPI loader and parser for OpenAPI 3.x at MVP level
+- internal models for endpoints and parsed spec metadata
+- automatic functional test case generation
+- HTTP request execution with `requests`
+- status code validation
+- basic response schema validation with `jsonschema`
+- CLI summary for parsing, generation, and execution
+- Docker packaging and Docker Compose demo run
+- pytest suite for parser, generator, executor, and CLI
 
 Not implemented yet:
-- real OpenAPI parsing
-- automatic test case generation
-- HTTP execution engine
-- response validation
-- report generation logic
+- HTML/JSON report writer for final result export
+- advanced authentication flows
+- stateful workflow execution across multiple endpoints
+- async execution or performance testing
 
 ---
 
@@ -33,7 +33,6 @@ Not implemented yet:
 openapi-test-tool/
 ├── src/
 │   └── openapi_test_tool/
-│       ├── __init__.py
 │       ├── cli.py
 │       ├── config.py
 │       ├── parser/
@@ -72,7 +71,7 @@ openapi-test-tool/
 make install
 ```
 
-### 2. Run CLI skeleton
+### 2. Run the CLI
 
 ```bash
 make run
@@ -108,20 +107,22 @@ make docker-build
 ### Run container
 
 ```bash
-make docker-run
-```
-
-Or run manually:
-
-```bash
 docker run --rm -it \
   -v "$(pwd)/samples:/app/samples" \
   -v "$(pwd)/reports:/app/reports" \
   openapi-test-tool:dev \
   --spec samples/sample_openapi.yaml \
-  --base-url http://localhost:8000 \
+  --base-url http://host.docker.internal:8000 \
   --output reports
 ```
+
+### Important Docker note
+
+If the tool runs **inside Docker** and your API runs **on the host machine**, `localhost` inside the container is not always the same as the host machine.
+
+Common options:
+- use `host.docker.internal`
+- or run both services in the same Docker Compose network
 
 ---
 
@@ -138,7 +139,7 @@ Run with custom arguments:
 ```bash
 docker compose run --rm tool \
   --spec samples/sample_openapi.yaml \
-  --base-url http://localhost:8000 \
+  --base-url http://host.docker.internal:8000 \
   --output reports
 ```
 
@@ -154,11 +155,3 @@ make docker-build
 make docker-run
 make clean
 ```
-
----
-
-## Notes
-
-- Docker is used here to package the CLI tool and make demo/setup easier.
-- The current implementation only validates input arguments and prepares the output directory.
-- Full business logic will be added in later milestones.

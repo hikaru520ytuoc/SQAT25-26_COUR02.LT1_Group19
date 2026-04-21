@@ -20,11 +20,12 @@ docker-build:
 
 docker-run:
 	docker run --rm -it \
+		--add-host host.docker.internal:host-gateway \
 		-v $(PWD)/samples:/app/samples \
 		-v $(PWD)/reports:/app/reports \
 		openapi-test-tool:dev \
 		--spec samples/sample_openapi.yaml \
-		--base-url http://localhost:8000 \
+		--base-url http://host.docker.internal:8000 \
 		--output reports
 
 clean:

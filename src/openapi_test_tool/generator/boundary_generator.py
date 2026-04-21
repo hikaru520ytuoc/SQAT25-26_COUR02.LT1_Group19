@@ -5,6 +5,7 @@ from typing import Any
 
 from openapi_test_tool.generator.testcase_model import GeneratedTestCase, TestCaseCategory, TestCaseType
 from openapi_test_tool.generator.valid_case_generator import (
+    build_expected_response_schema_map,
     build_valid_input_bundle,
     select_expected_success_status,
 )
@@ -14,9 +15,13 @@ from openapi_test_tool.parser.models import EndpointSpec
 def generate_boundary_test_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]:
     cases: list[GeneratedTestCase] = []
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
 
     for parameter in endpoint.parameters:
-        boundary_value = _build_boundary_value(parameter.schema_data, current_value=_current_value(parameter.location, parameter.name, path_params, query_params))
+        boundary_value = _build_boundary_value(
+            parameter.schema_data,
+            current_value=_current_value(parameter.location, parameter.name, path_params, query_params),
+        )
         if boundary_value is None:
             continue
 
@@ -41,6 +46,7 @@ def generate_boundary_test_cases(endpoint: EndpointSpec) -> list[GeneratedTestCa
                 headers=deepcopy(headers),
                 request_body=deepcopy(request_body),
                 expected_status_codes=select_expected_success_status(endpoint),
+                expected_response_schemas=response_schemas,
                 category=TestCaseCategory.VALID,
                 test_type=TestCaseType.BOUNDARY_VALUE,
                 source_operation_id=endpoint.operation_id,
@@ -71,6 +77,7 @@ def generate_boundary_test_cases(endpoint: EndpointSpec) -> list[GeneratedTestCa
                     headers=deepcopy(headers),
                     request_body=mutated_body,
                     expected_status_codes=select_expected_success_status(endpoint),
+                    expected_response_schemas=response_schemas,
                     category=TestCaseCategory.VALID,
                     test_type=TestCaseType.BOUNDARY_VALUE,
                     source_operation_id=endpoint.operation_id,

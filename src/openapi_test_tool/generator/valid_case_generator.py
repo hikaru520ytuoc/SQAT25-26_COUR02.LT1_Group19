@@ -80,6 +80,16 @@ def build_valid_input_bundle(endpoint: EndpointSpec) -> tuple[dict[str, Any], di
     return path_params, query_params, headers, request_body
 
 
+def build_expected_response_schema_map(endpoint: EndpointSpec) -> dict[str, dict[str, Any] | None]:
+    """Collect resolved response schemas keyed by status code for later execution."""
+
+    schema_map: dict[str, dict[str, Any] | None] = {}
+    for response in endpoint.responses:
+        if response.schema_data is not None:
+            schema_map[response.status_code] = deepcopy(response.schema_data)
+    return schema_map
+
+
 def select_expected_success_status(endpoint: EndpointSpec) -> list[int]:
     numeric_statuses = _extract_numeric_statuses(endpoint)
     for preferred_status in SUCCESS_STATUS_PRIORITY:
@@ -111,6 +121,7 @@ def select_expected_client_error_status(endpoint: EndpointSpec) -> list[int]:
 
 def generate_valid_test_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]:
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
 
     return [
         GeneratedTestCase(
@@ -124,6 +135,7 @@ def generate_valid_test_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]
             headers=headers,
             request_body=request_body,
             expected_status_codes=select_expected_success_status(endpoint),
+            expected_response_schemas=response_schemas,
             category=TestCaseCategory.VALID,
             test_type=TestCaseType.VALID_CASE,
             source_operation_id=endpoint.operation_id,

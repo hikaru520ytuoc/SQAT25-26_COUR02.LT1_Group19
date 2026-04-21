@@ -8,6 +8,8 @@ services:
     working_dir: /app
     environment:
       PYTHONUNBUFFERED: "1"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./samples:/app/samples
       - ./reports:/app/reports
@@ -15,6 +17,6 @@ services:
       - --spec
       - samples/sample_openapi.yaml
       - --base-url
-      - http://localhost:8000
+      - http://host.docker.internal:8000
       - --output
       - reports

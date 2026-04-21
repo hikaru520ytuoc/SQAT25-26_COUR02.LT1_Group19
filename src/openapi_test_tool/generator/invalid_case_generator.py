@@ -5,6 +5,7 @@ from typing import Any
 
 from openapi_test_tool.generator.testcase_model import GeneratedTestCase, TestCaseCategory, TestCaseType
 from openapi_test_tool.generator.valid_case_generator import (
+    build_expected_response_schema_map,
     build_valid_input_bundle,
     select_expected_client_error_status,
 )
@@ -24,6 +25,7 @@ def generate_invalid_test_cases(endpoint: EndpointSpec) -> list[GeneratedTestCas
 def _generate_missing_required_parameter_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]:
     cases: list[GeneratedTestCase] = []
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
 
     for parameter in endpoint.parameters:
         if not parameter.required or parameter.location not in {"path", "query"}:
@@ -48,6 +50,7 @@ def _generate_missing_required_parameter_cases(endpoint: EndpointSpec) -> list[G
                 headers=deepcopy(headers),
                 request_body=deepcopy(request_body),
                 expected_status_codes=select_expected_client_error_status(endpoint),
+                expected_response_schemas=response_schemas,
                 category=TestCaseCategory.INVALID,
                 test_type=TestCaseType.MISSING_REQUIRED_PARAMETER,
                 source_operation_id=endpoint.operation_id,
@@ -74,6 +77,7 @@ def _generate_missing_required_field_cases(endpoint: EndpointSpec) -> list[Gener
         return []
 
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
     if not isinstance(request_body, dict):
         return []
 
@@ -97,6 +101,7 @@ def _generate_missing_required_field_cases(endpoint: EndpointSpec) -> list[Gener
                 headers=deepcopy(headers),
                 request_body=mutated_body,
                 expected_status_codes=select_expected_client_error_status(endpoint),
+                expected_response_schemas=response_schemas,
                 category=TestCaseCategory.INVALID,
                 test_type=TestCaseType.MISSING_REQUIRED_FIELD,
                 source_operation_id=endpoint.operation_id,
@@ -111,6 +116,7 @@ def _generate_missing_required_field_cases(endpoint: EndpointSpec) -> list[Gener
 def _generate_wrong_data_type_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]:
     cases: list[GeneratedTestCase] = []
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
 
     for parameter in endpoint.parameters:
         wrong_value = _build_wrong_type_value(parameter.schema_data)
@@ -138,6 +144,7 @@ def _generate_wrong_data_type_cases(endpoint: EndpointSpec) -> list[GeneratedTes
                 headers=deepcopy(headers),
                 request_body=deepcopy(request_body),
                 expected_status_codes=select_expected_client_error_status(endpoint),
+                expected_response_schemas=response_schemas,
                 category=TestCaseCategory.INVALID,
                 test_type=TestCaseType.WRONG_DATA_TYPE,
                 source_operation_id=endpoint.operation_id,
@@ -168,6 +175,7 @@ def _generate_wrong_data_type_cases(endpoint: EndpointSpec) -> list[GeneratedTes
                     headers=deepcopy(headers),
                     request_body=mutated_body,
                     expected_status_codes=select_expected_client_error_status(endpoint),
+                    expected_response_schemas=response_schemas,
                     category=TestCaseCategory.INVALID,
                     test_type=TestCaseType.WRONG_DATA_TYPE,
                     source_operation_id=endpoint.operation_id,
@@ -182,6 +190,7 @@ def _generate_wrong_data_type_cases(endpoint: EndpointSpec) -> list[GeneratedTes
 def _generate_invalid_enum_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]:
     cases: list[GeneratedTestCase] = []
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
 
     for parameter in endpoint.parameters:
         invalid_value = _build_invalid_enum_value(parameter.schema_data)
@@ -209,6 +218,7 @@ def _generate_invalid_enum_cases(endpoint: EndpointSpec) -> list[GeneratedTestCa
                 headers=deepcopy(headers),
                 request_body=deepcopy(request_body),
                 expected_status_codes=select_expected_client_error_status(endpoint),
+                expected_response_schemas=response_schemas,
                 category=TestCaseCategory.INVALID,
                 test_type=TestCaseType.INVALID_ENUM,
                 source_operation_id=endpoint.operation_id,
@@ -239,6 +249,7 @@ def _generate_invalid_enum_cases(endpoint: EndpointSpec) -> list[GeneratedTestCa
                     headers=deepcopy(headers),
                     request_body=mutated_body,
                     expected_status_codes=select_expected_client_error_status(endpoint),
+                    expected_response_schemas=response_schemas,
                     category=TestCaseCategory.INVALID,
                     test_type=TestCaseType.INVALID_ENUM,
                     source_operation_id=endpoint.operation_id,
@@ -253,6 +264,7 @@ def _generate_invalid_enum_cases(endpoint: EndpointSpec) -> list[GeneratedTestCa
 def _generate_empty_value_cases(endpoint: EndpointSpec) -> list[GeneratedTestCase]:
     cases: list[GeneratedTestCase] = []
     path_params, query_params, headers, request_body = build_valid_input_bundle(endpoint)
+    response_schemas = build_expected_response_schema_map(endpoint)
 
     for parameter in endpoint.parameters:
         if not parameter.required or parameter.schema_data.get("type") != "string":
@@ -279,6 +291,7 @@ def _generate_empty_value_cases(endpoint: EndpointSpec) -> list[GeneratedTestCas
                 headers=deepcopy(headers),
                 request_body=deepcopy(request_body),
                 expected_status_codes=select_expected_client_error_status(endpoint),
+                expected_response_schemas=response_schemas,
                 category=TestCaseCategory.INVALID,
                 test_type=TestCaseType.EMPTY_VALUE,
                 source_operation_id=endpoint.operation_id,
@@ -309,6 +322,7 @@ def _generate_empty_value_cases(endpoint: EndpointSpec) -> list[GeneratedTestCas
                     headers=deepcopy(headers),
                     request_body=mutated_body,
                     expected_status_codes=select_expected_client_error_status(endpoint),
+                    expected_response_schemas=response_schemas,
                     category=TestCaseCategory.INVALID,
                     test_type=TestCaseType.EMPTY_VALUE,
                     source_operation_id=endpoint.operation_id,
@@ -322,18 +336,14 @@ def _generate_empty_value_cases(endpoint: EndpointSpec) -> list[GeneratedTestCas
 
 def _build_wrong_type_value(schema: dict[str, Any]) -> Any | None:
     schema_type = schema.get("type")
-    if schema_type == "integer":
-        return "wrong_type"
-    if schema_type == "number":
+    if schema_type in {"integer", "number"}:
         return "wrong_type"
     if schema_type == "boolean":
         return "wrong_type"
-    if schema_type == "array":
-        return "wrong_type"
-    if schema_type == "object" or "properties" in schema:
+    if schema_type in {"array", "object"}:
         return "wrong_type"
     if schema_type == "string":
-        return 123
+        return 12345
     return None
 
 
@@ -342,12 +352,4 @@ def _build_invalid_enum_value(schema: dict[str, Any]) -> Any | None:
     if not enum_values:
         return None
 
-    invalid_candidate = "__invalid_enum__"
-    if invalid_candidate not in enum_values:
-        return invalid_candidate
-
-    numeric_candidate = -99999
-    if numeric_candidate not in enum_values:
-        return numeric_candidate
-
-    return None
+    return "__invalid_enum__"
