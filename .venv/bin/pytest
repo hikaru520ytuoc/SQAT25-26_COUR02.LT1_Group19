@@ -1,0 +1,6 @@
+#!/home/hikaru520/Projects/SQAT25-26_COUR02.LT1_Group19/.venv/bin/python3
+import sys
+from pytest import console_main
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(console_main())
