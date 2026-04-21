@@ -14,7 +14,7 @@ from openapi_test_tool.cli import app  # noqa: E402
 runner = CliRunner()
 
 
-def test_cli_smoke_creates_output_dir(tmp_path):
+def test_cli_parse_success(tmp_path):
     spec_path = PROJECT_ROOT / "samples" / "sample_openapi.yaml"
     output_dir = tmp_path / "reports"
 
@@ -33,3 +33,5 @@ def test_cli_smoke_creates_output_dir(tmp_path):
     assert result.exit_code == 0
     assert output_dir.exists()
     assert "OpenAPI parsing completed successfully." in result.stdout
+    assert "Operation count" in result.stdout
+    assert "/users/{userId}" in result.stdout
