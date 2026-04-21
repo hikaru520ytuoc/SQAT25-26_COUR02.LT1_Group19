@@ -28,7 +28,7 @@ def test_extract_endpoints_from_sample_spec():
     assert any(parameter.location == "query" and parameter.name == "includePosts" for parameter in get_user.parameters)
     assert any(parameter.location == "header" and parameter.name == "X-Trace-Id" for parameter in get_user.parameters)
     assert get_user.responses[0].schema_data is not None
-    assert get_user.responses[0].schema_data["properties"]["name"]["type"] == "string"
+    assert get_user.responses[0].schema_data["properties"]["username"]["type"] == "string"
 
     create_user = endpoints[("POST", "/users")]
     assert create_user.request_body is not None

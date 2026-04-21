@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: Sample User API
-  version: 0.2.0
-  description: Sample OpenAPI spec for parser development.
+  version: 0.3.0
+  description: Sample OpenAPI spec for parser and test case generator development.
 
 servers:
   - url: http://localhost:8000
@@ -16,6 +16,8 @@ paths:
         description: Unique identifier of a user.
         schema:
           type: integer
+          minimum: 1
+          example: 10
     get:
       summary: Get user by id
       operationId: getUserById
@@ -26,12 +28,14 @@ paths:
           description: Include recent posts in the response.
           schema:
             type: boolean
+            example: true
         - name: X-Trace-Id
           in: header
           required: false
           description: Trace identifier for debugging.
           schema:
             type: string
+            example: trace-123
       responses:
         "200":
           description: User found
@@ -69,6 +73,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -77,27 +87,51 @@ components:
       properties:
         id:
           type: integer
-        name:
+        username:
           type: string
+          minLength: 3
         email:
           type: string
           format: email
+        age:
+          type: integer
+          minimum: 18
+        role:
+          type: string
+          enum: [admin, member]
       required:
         - id
-        - name
+        - username
         - email
+        - age
+        - role
 
     CreateUserRequest:
       type: object
       properties:
-        name:
+        username:
           type: string
+          minLength: 3
+          maxLength: 20
+          example: alice
         email:
           type: string
           format: email
+          example: alice@example.com
+        age:
+          type: integer
+          minimum: 18
+          maximum: 120
+          example: 25
+        role:
+          type: string
+          enum: [admin, member]
+          example: member
       required:
-        - name
+        - username
         - email
+        - age
+        - role
 
     ErrorResponse:
       type: object

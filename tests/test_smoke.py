@@ -32,4 +32,4 @@ def test_cli_smoke_creates_output_dir(tmp_path):
 
     assert result.exit_code == 0
     assert output_dir.exists()
-    assert "OpenAPI parsing completed successfully." in result.stdout
+    assert "Test case generation completed successfully." in result.stdout
